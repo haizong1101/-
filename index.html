@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海城市更新观察看板</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-0: #f4f4f2;
+    --surface-1: #fcfcfb;
+    --surface-2: #ffffff;
+    --border: #e3e2dd;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7c7b76;
+    --accent: #2a78d6;
+    --accent-soft: rgba(42, 120, 214, 0.10);
+    --tag-news: #2a78d6;
+    --tag-event: #4a3aa7;
+    --tag-case: #1baf7a;
+    --tag-policy: #eb6834;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 14px rgba(0,0,0,0.04);
+    --ill-sky: #dcebfa;
+    --ill-ground: #e8e6df;
+    --ill-brick: #b5563e;
+    --ill-brick-2: #96432f;
+    --ill-stone: #8f8c84;
+    --ill-water: #9ec4e8;
+    --ill-green: #7fb98a;
+    --ill-cream: #efe3cd;
+    --ill-line: #52514e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-0: #121211;
+      --surface-1: #1a1a19;
+      --surface-2: #222221;
+      --border: #34342f;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #8f8e85;
+      --accent: #3987e5;
+      --accent-soft: rgba(57, 135, 229, 0.16);
+      --tag-news: #3987e5;
+      --tag-event: #9085e9;
+      --tag-case: #199e70;
+      --tag-policy: #d95926;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4);
+      --ill-sky: #1f2c3c;
+      --ill-ground: #26261f;
+      --ill-brick: #a34c36;
+      --ill-brick-2: #7d3826;
+      --ill-stone: #6d6a62;
+      --ill-water: #33547a;
+      --ill-green: #4a7a54;
+      --ill-cream: #4a4232;
+      --ill-line: #c3c2b7;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-0: #121211;
+    --surface-1: #1a1a19;
+    --surface-2: #222221;
+    --border: #34342f;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #8f8e85;
+    --accent: #3987e5;
+    --accent-soft: rgba(57, 135, 229, 0.16);
+    --tag-news: #3987e5;
+    --tag-event: #9085e9;
+    --tag-case: #199e70;
+    --tag-policy: #d95926;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --ill-sky: #1f2c3c;
+    --ill-ground: #26261f;
+    --ill-brick: #a34c36;
+    --ill-brick-2: #7d3826;
+    --ill-stone: #6d6a62;
+    --ill-water: #33547a;
+    --ill-green: #4a7a54;
+    --ill-cream: #4a4232;
+    --ill-line: #c3c2b7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    line-height: 1.65;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- header ---------- */
+  header.hero {
+    background: linear-gradient(135deg, var(--accent-soft), transparent 60%);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 0 24px;
+  }
+  .hero h1 { font-size: 1.7rem; letter-spacing: 0.02em; }
+  .hero .sub { color: var(--text-secondary); margin-top: 6px; font-size: 0.95rem; }
+  .hero .meta { color: var(--text-muted); margin-top: 10px; font-size: 0.82rem; }
+
+  /* ---------- KPI row ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .kpi {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; box-shadow: var(--shadow); display: block; transition: border-color .15s;
+  }
+  .kpi:hover { border-color: var(--accent); }
+  .kpi .num { font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi .num small { font-size: 0.85rem; font-weight: 600; margin-left: 2px; }
+  .kpi .lbl { color: var(--text-secondary); font-size: 0.82rem; margin-top: 2px; }
+  .kpi .src { color: var(--text-muted); font-size: 0.72rem; margin-top: 4px; }
+
+  /* ---------- nav ---------- */
+  nav.toc {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface-1); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+  }
+  nav.toc .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 8px 20px; }
+  nav.toc a {
+    white-space: nowrap; padding: 6px 14px; border-radius: 999px;
+    font-size: 0.88rem; color: var(--text-secondary);
+  }
+  nav.toc a:hover { background: var(--accent-soft); color: var(--text-primary); }
+
+  /* ---------- sections ---------- */
+  section { padding: 34px 0 8px; scroll-margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .sec-head h2 { font-size: 1.25rem; }
+  .sec-head .hint { color: var(--text-muted); font-size: 0.8rem; }
+  .sec-desc { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 16px; }
+
+  /* ---------- tags ---------- */
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 600; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 1px 9px;
+  }
+  .tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dot, var(--text-muted)); }
+  .tag.news   { --dot: var(--tag-news); }
+  .tag.event  { --dot: var(--tag-event); }
+  .tag.case   { --dot: var(--tag-case); }
+  .tag.policy { --dot: var(--tag-policy); }
+
+  /* ---------- list cards ---------- */
+  .cards { display: grid; gap: 12px; }
+  .cards.cols-2 { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  a.item {
+    display: block; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow);
+    transition: border-color .15s, transform .15s;
+  }
+  a.item:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .item .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .item .date { color: var(--text-muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+  .item h3 { font-size: 0.98rem; line-height: 1.5; }
+  .item h3 .ext { color: var(--accent); font-size: 0.8em; margin-left: 4px; }
+  .item p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 5px; }
+  .item .src { color: var(--text-muted); font-size: 0.75rem; margin-top: 8px; }
+
+  /* ---------- case cards with illustration ---------- */
+  .case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .case {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column;
+  }
+  .case .pic { display: block; line-height: 0; border-bottom: 1px solid var(--border); }
+  .case .pic svg { width: 100%; height: auto; display: block; }
+  .case .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .case h3 { font-size: 1.02rem; }
+  .case h3 a:hover { color: var(--accent); }
+  .case .feat { color: var(--text-secondary); font-size: 0.85rem; }
+  .case .feat b { color: var(--text-primary); font-weight: 600; }
+  .case ul { margin: 0 0 0 1.1em; color: var(--text-secondary); font-size: 0.84rem; }
+  .case ul li { margin: 2px 0; }
+  .case .links { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .case .links a {
+    font-size: 0.78rem; color: var(--accent); border: 1px solid var(--border);
+    border-radius: 999px; padding: 3px 11px;
+  }
+  .case .links a:hover { background: var(--accent-soft); }
+  .pic-note { color: var(--text-muted); font-size: 0.78rem; margin: 10px 0 14px; }
+
+  footer { border-top: 1px solid var(--border); margin-top: 40px; padding: 22px 0 40px; color: var(--text-muted); font-size: 0.8rem; }
+  footer a { color: var(--text-secondary); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>上海城市更新观察看板</h1>
+    <div class="sub">聚合上海市政府、市住建委、市规划和自然资源局及主流行业媒体的城市更新要闻、案例与政策</div>
+    <div class="meta">更新日期：2026年7月14日 · 所有条目均可点击跳转来源网页 · 摘要覆盖近期（截至前一日）要点</div>
+
+    <div class="kpis">
+      <a class="kpi" href="https://house.cnr.cn/jdt/20251027/t20251027_527408598.shtml" target="_blank" rel="noopener">
+        <div class="num">59<small>个</small></div>
+        <div class="lbl">全市集中推介的城中村改造项目</div>
+        <div class="src">来源：央广网 ↗</div>
+      </a>
+      <a class="kpi" href="https://www.shanghai.gov.cn/nw31406/20251022/d6e27eb35ef44884a3cf207aa8deb866.html" target="_blank" rel="noopener">
+        <div class="num">2100<small>亿元</small></div>
+        <div class="lbl">城中村改造前期投资规模</div>
+        <div class="src">来源：上海市政府 ↗</div>
+      </a>
+      <a class="kpi" href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener">
+        <div class="num">28<small>万㎡</small></div>
+        <div class="lbl">2026年计划实施不成套职工住宅改造</div>
+        <div class="src">来源：腾讯新闻 ↗</div>
+      </a>
+      <a class="kpi" href="https://www.shjx.org.cn/article-23764.aspx" target="_blank" rel="noopener">
+        <div class="num">2026<small>年底</small></div>
+        <div class="lbl">全面启动城中村整体改造项目</div>
+        <div class="src">来源：市建筑施工行业协会 ↗</div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#summary">① 今日摘要</a>
+    <a href="#news">② 重点新闻与事件</a>
+    <a href="#cases">③ 城市更新案例</a>
+    <a href="#policy">④ 政策文件</a>
+    <a href="#national">⑤ 外地经验</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= 1 今日摘要 ================= -->
+  <section id="summary">
+    <div class="sec-head"><h2>① 今日摘要</h2><span class="hint">近期热点新闻 · 重点事件 · 更新案例 · 政策文件</span></div>
+    <div class="sec-desc">截至 2026 年 7 月 13 日的上海城市更新领域要点速览，按类别标注，点击任一条目打开来源网页。</div>
+    <div class="cards cols-2">
+
+      <a class="item" href="https://news.online.sh.cn/news/gb/content/2026-07/10/content_10467954.htm" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">热点新闻</span><span class="date">2026-07-10</span></div>
+        <h3>"装配式建造"迎来城市更新万亿级风口<span class="ext">↗</span></h3>
+        <p>行业专家与企业代表研讨装配式建筑、装配式装修如何抢抓城市更新发展机遇，旧住房拆除重建提速带来产业新空间。</p>
+        <div class="src">上海热线·新闻频道</div>
+      </a>
+
+      <a class="item" href="https://zjw.sh.gov.cn/xwfb/20260630/03390371d54b4e1fb8a76fe254bff02b.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">重点事件</span><span class="date">2026-06-30</span></div>
+        <h3>勇立潮头奋力一跳，探索超大城市更新发展路径<span class="ext">↗</span></h3>
+        <p>国务院《城市更新"十五五"规划》印发后，上海明确主动扛起超大城市使命担当，聚焦城中村和旧住房成套改造提速攻坚。</p>
+        <div class="src">上海市住房和城乡建设管理委员会</div>
+      </a>
+
+      <a class="item" href="https://m.thepaper.cn/newsDetail_forward_33514297" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">重点事件</span><span class="date">2026-07-05</span></div>
+        <h3>2026中国城市更新创新发展研讨交流会在京举办<span class="ext">↗</span></h3>
+        <p>大会以"焕新向实·共生共长"为主题，重点交流各地已验证可行的操作路径与标杆案例，上海经验受到关注。</p>
+        <div class="src">澎湃新闻</div>
+      </a>
+
+      <a class="item" href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener">
+        <div class="top"><span class="tag case">更新案例</span><span class="date">2026年4月封顶</span></div>
+        <h3>杨浦凤南一村拆除重建项目首栋住宅楼封顶<span class="ext">↗</span></h3>
+        <p>全市规模最大、推进最快的旧住房拆除重建项目之一取得节点进展；浦东、宝山、嘉定等多区旧改进入实质性操作阶段。</p>
+        <div class="src">腾讯新闻</div>
+      </a>
+
+      <a class="item" href="https://ghzyj.sh.gov.cn/hyxw/20260612/0a5e45e1ba4b4906b3ac1d55b8a496b6.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">政策文件</span><span class="date">2026-06-12</span></div>
+        <h3>未来五年城市这样更新！四部门详解《城市更新"十五五"规划》<span class="ext">↗</span></h3>
+        <p>规划部署 6 方面重点任务、7 方面政策举措、14 项重大工程；2026 年安排中央预算内城市更新专项资金 970 亿元。</p>
+        <div class="src">上海市规划和自然资源局</div>
+      </a>
+
+      <a class="item" href="https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20260514/969975.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">政策文件</span><span class="date">2026-05-14</span></div>
+        <h3>上海首次编制城市更新和住房发展"十五五"规划<span class="ext">↗</span></h3>
+        <p>构建"惠民生、促发展、提品质、续文脉、优生态、强韧性"六个维度 23 项重点任务，全面承接国家城市更新战略。</p>
+        <div class="src">普陀区规划资源局（转发市级动态）</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ================= 2 重点新闻与事件 ================= -->
+  <section id="news">
+    <div class="sec-head"><h2>② 重点新闻与事件</h2><span class="hint">上海城市更新重大进展</span></div>
+    <div class="sec-desc">近一年上海城市更新领域的标志性新闻与事件，按时间倒序排列。</div>
+    <div class="cards">
+
+      <a class="item" href="https://zjw.sh.gov.cn/xwfb/20260630/03390371d54b4e1fb8a76fe254bff02b.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">市住建委</span><span class="date">2026-06-30</span></div>
+        <h3>上海贯彻落实城市更新"十五五"规划：探索超大城市更新发展路径<span class="ext">↗</span></h3>
+        <p>作为全国城市更新的探路者，上海将围绕国家规划目标指标、重点任务、重大工程逐项落地，持续当好改革开放排头兵。</p>
+      </a>
+
+      <a class="item" href="https://www.news.cn/politics/20260528/e86f18bce6634311a69d13e4680049a0/c.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">国家层面</span><span class="date">2026-05-28</span></div>
+        <h3>国务院印发《城市更新"十五五"规划》，城市更新有了"路线图""任务书"<span class="ext">↗</span></h3>
+        <p>到 2030 年城市更新行动取得重要进展，到 2035 年现代化人民城市基本建成；对上海超大城市更新提出更高要求。</p>
+        <div class="src">新华网</div>
+      </a>
+
+      <a class="item" href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">旧改提速</span><span class="date">2026-05-21</span></div>
+        <h3>多区启动！上海拆迁、旧改节奏加速，"小梁薄板"改造明确提速<span class="ext">↗</span></h3>
+        <p>2026 年全市计划实施不成套职工住宅改造 28 万平方米；浦东、宝山、嘉定等区进入实质操作阶段，凤南一村首栋封顶。</p>
+        <div class="src">腾讯新闻</div>
+      </a>
+
+      <a class="item" href="https://m.caizhongshe.cn/article-1397812160070524318.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">黄浦收官</span><span class="date">2026年初</span></div>
+        <h3>黄浦区零星旧改全面清零，上海旧改迈入风貌活化新阶段<span class="ext">↗</span></h3>
+        <p>持续十余年的大规模旧改"上半场"收官；外滩"第二立面"141 处历史建筑渐进式更新，探索城市更新全新范式。</p>
+        <div class="src">财中社</div>
+      </a>
+
+      <a class="item" href="https://www.shanghai.gov.cn/nw31406/20251022/d6e27eb35ef44884a3cf207aa8deb866.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">招商推介</span><span class="date">2025-10-22</span></div>
+        <h3>"旧村貌"蜕变"新城景"：59个城中村改造项目集中推介，前期投资2100亿元<span class="ext">↗</span></h3>
+        <p>覆盖 10 个区、占地近 3 万亩，拉动建安投资约 1600 亿元；国开行对专项借款予以全额保障并搭建绿色审批通道。</p>
+        <div class="src">上海市人民政府（另见 <u>央广网报道</u>）</div>
+      </a>
+
+      <a class="item" href="https://zjw.sh.gov.cn/gzdt/20250808/d3957920e14e40cabcb3ea423a85a164.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">市住建委</span><span class="date">2025-08-07</span></div>
+        <h3>上海官宣：2026年将全面启动城中村整体改造项目<span class="ext">↗</span></h3>
+        <p>自 2014 年启动以来累计实施城中村改造项目 118 个；目标 2027 年基本完成整体改造，2027 年底完成小梁薄板房屋改造。</p>
+      </a>
+
+      <a class="item" href="http://www.why.com.cn/wx/article/2025/07/30/17538789041143250083.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">模式创新</span><span class="date">2025-07-30</span></div>
+        <h3>上海建立健全可持续的城市更新模式，深入实施城市更新行动<span class="ext">↗</span></h3>
+        <p>从"拆改留"转向"留改拆"，以区域更新统筹零星更新，强化资金、土地、规划政策工具箱。</p>
+        <div class="src">青年报·青春上海</div>
+      </a>
+
+      <a class="item" href="https://ghzyj.sh.gov.cn/tpxw/20250616/516bae909c0b4c24a11e8858265ea214.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">市规资局</span><span class="date">2025-06-16</span></div>
+        <h3>构建新范式、完善新生态让城市"更新"——上海打造超大城市更新样本<span class="ext">↗</span></h3>
+        <p>系统梳理上海城市更新的规划引领、政策供给与实施机制，形成可复制可推广的"上海样本"。</p>
+      </a>
+
+      <a class="item" href="https://m.jiemian.com/article/13408629.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">项目发布</span><span class="date">2025年</span></div>
+        <h3>政策持续发力：上海发布42个城市更新项目，为全国提供"上海经验"<span class="ext">↗</span></h3>
+        <p>覆盖综合区域、人居环境、公共空间等多种类型，展示多元主体参与的更新实施路径。</p>
+        <div class="src">界面新闻</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ================= 3 城市更新案例 ================= -->
+  <section id="cases">
+    <div class="sec-head"><h2>③ 城市更新案例</h2><span class="hint">特点 · 经验 · 图片</span></div>
+    <div class="sec-desc">上海代表性城市更新案例及其可借鉴经验。</div>
+    <div class="pic-note">※ 卡片配图为手绘示意图（受网络环境限制无法直接引用外部图片）；每个案例均附"图文报道"链接，点击可查看来源网页中的实景照片。</div>
+    <div class="case-grid">
+
+      <!-- 张园 -->
+      <div class="case">
+        <a class="pic" href="https://www.swireproperties.com/zh-hk/portfolio/current-developments/zhangyuan/" target="_blank" rel="noopener" aria-label="张园实景图文（太古地产）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="张园石库门建筑群示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="118" width="360" height="32" fill="var(--ill-ground)"/>
+            <rect x="30" y="52" width="90" height="66" fill="var(--ill-brick)"/>
+            <rect x="30" y="46" width="90" height="8" fill="var(--ill-brick-2)"/>
+            <rect x="58" y="76" width="34" height="42" rx="17" fill="var(--ill-cream)"/>
+            <rect x="55" y="72" width="40" height="8" fill="var(--ill-stone)"/>
+            <rect x="140" y="62" width="80" height="56" fill="var(--ill-brick-2)"/>
+            <rect x="140" y="56" width="80" height="8" fill="var(--ill-brick)"/>
+            <rect x="152" y="74" width="16" height="20" fill="var(--ill-cream)"/>
+            <rect x="192" y="74" width="16" height="20" fill="var(--ill-cream)"/>
+            <rect x="164" y="100" width="32" height="18" fill="var(--ill-cream)"/>
+            <rect x="240" y="48" width="90" height="70" fill="var(--ill-brick)"/>
+            <rect x="240" y="42" width="90" height="8" fill="var(--ill-brick-2)"/>
+            <rect x="266" y="72" width="36" height="46" rx="18" fill="var(--ill-cream)"/>
+            <rect x="262" y="66" width="44" height="9" fill="var(--ill-stone)"/>
+            <circle cx="284" cy="88" r="4" fill="var(--ill-brick-2)"/>
+            <text x="14" y="26" font-size="13" fill="var(--ill-line)" font-weight="600">张园 · 石库门建筑群</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://www.swireproperties.com/zh-hk/portfolio/current-developments/zhangyuan/" target="_blank" rel="noopener">张园：石库门里弄"保护性征收"样本 ↗</a></h3>
+          <div class="feat"><b>特点：</b>"海上第一名园"，上海现存规模最大、保存最完整的石库门建筑群，首创"保护性征收"模式。</div>
+          <ul>
+            <li>"一幢一档"建筑档案，修旧如旧、最小干预</li>
+            <li>地上风貌保护 + 地下空间综合开发（连通地铁）</li>
+            <li>政企合作导入高端商业与文化功能，"以用促保"</li>
+          </ul>
+          <div class="links">
+            <a href="https://www.swireproperties.com/zh-hk/portfolio/current-developments/zhangyuan/" target="_blank" rel="noopener">图文报道 · 太古地产</a>
+            <a href="https://ghzyj.sh.gov.cn/tpxw/20240522/0f101913729f4a10b1d63bffda4367f6.html" target="_blank" rel="noopener">市规资局 · 文化乡愁</a>
+            <a href="http://www.sydcch.com/chanyedichan/chengshigengxin/2022/1213/8680.html" target="_blank" rel="noopener">四大项目比较</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 上生新所 -->
+      <div class="case">
+        <a class="pic" href="https://archina.com/index.php?a=show&g=ela&id=5782&m=index" target="_blank" rel="noopener" aria-label="上生新所实景图文（景观网）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="上生新所海军俱乐部泳池与柱廊示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="112" width="360" height="38" fill="var(--ill-ground)"/>
+            <rect x="26" y="46" width="308" height="14" fill="var(--ill-cream)"/>
+            <rect x="34" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="94" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="154" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="214" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="274" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="314" y="60" width="12" height="52" fill="var(--ill-cream)"/>
+            <rect x="60" y="118" width="240" height="24" rx="6" fill="var(--ill-water)"/>
+            <path d="M70 128 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="var(--ill-sky)" stroke-width="2.5" fill="none"/>
+            <text x="14" y="26" font-size="13" fill="var(--ill-line)" font-weight="600">上生·新所 · 泳池与柱廊</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://archina.com/index.php?a=show&g=ela&id=5782&m=index" target="_blank" rel="noopener">上生·新所：百年园区的"城市再生" ↗</a></h3>
+          <div class="feat"><b>特点：</b>原哥伦比亚乡村俱乐部及上海生物制品研究所园区，封闭近 70 年后转型为开放式文创街区。</div>
+          <ul>
+            <li>"空间、文化、内容"三维再生策略（万科运营）</li>
+            <li>历史建筑（孙科别墅、海军俱乐部泳池）活化利用</li>
+            <li>工业遗存嵌入 24 小时开放街区，激活周边社区</li>
+          </ul>
+          <div class="links">
+            <a href="https://archina.com/index.php?a=show&g=ela&id=5782&m=index" target="_blank" rel="noopener">图文报道 · 景观网</a>
+            <a href="http://www.sydcch.com/chanyedichan/chengshigengxin/2022/1213/8680.html" target="_blank" rel="noopener">四大项目比较</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 曹杨社区 -->
+      <div class="case">
+        <a class="pic" href="https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20251126/965414.html" target="_blank" rel="noopener" aria-label="曹杨社区实景图文（普陀区规划资源局）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="曹杨新村工人住宅与百禧公园高线示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="116" width="360" height="34" fill="var(--ill-ground)"/>
+            <rect x="28" y="58" width="70" height="58" fill="var(--ill-cream)"/>
+            <path d="M24 58 L63 38 L102 58 Z" fill="var(--ill-brick)"/>
+            <rect x="40" y="72" width="14" height="16" fill="var(--ill-water)"/>
+            <rect x="72" y="72" width="14" height="16" fill="var(--ill-water)"/>
+            <rect x="118" y="66" width="70" height="50" fill="var(--ill-cream)"/>
+            <path d="M114 66 L153 48 L192 66 Z" fill="var(--ill-brick)"/>
+            <rect x="130" y="78" width="14" height="14" fill="var(--ill-water)"/>
+            <rect x="162" y="78" width="14" height="14" fill="var(--ill-water)"/>
+            <rect x="210" y="84" width="130" height="10" rx="5" fill="var(--tag-case)"/>
+            <rect x="222" y="94" width="8" height="22" fill="var(--ill-stone)"/>
+            <rect x="272" y="94" width="8" height="22" fill="var(--ill-stone)"/>
+            <rect x="318" y="94" width="8" height="22" fill="var(--ill-stone)"/>
+            <circle cx="250" cy="76" r="8" fill="var(--ill-green)"/>
+            <circle cx="300" cy="74" r="10" fill="var(--ill-green)"/>
+            <text x="14" y="26" font-size="13" fill="var(--ill-line)" font-weight="600">曹杨新村 · 百禧公园高线</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20251126/965414.html" target="_blank" rel="noopener">曹杨社区：工人新村的焕活密码 ↗</a></h3>
+          <div class="feat"><b>特点：</b>新中国第一个工人新村（1951 年），入选首届"上海城市更新优秀实践案例"。</div>
+          <ul>
+            <li>曹杨一村旧住房成套改造，居民"原址回搬"</li>
+            <li>废弃铁路市场改造为"百禧公园"半地下高线公园</li>
+            <li>以"15分钟社区生活圈"统筹全域空间重组与治理</li>
+          </ul>
+          <div class="links">
+            <a href="https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20251126/965414.html" target="_blank" rel="noopener">图文报道 · 普陀规资局</a>
+            <a href="https://www.shanghai.gov.cn/nw17239/20241225/d3aa696a8afe4b7f9a6b0ae602426de2.html" target="_blank" rel="noopener">优秀案例评选</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 蟠龙天地 -->
+      <div class="case">
+        <a class="pic" href="https://www.dcbbs.com/i-117447.html" target="_blank" rel="noopener" aria-label="蟠龙天地实景图文（佰策地产文库）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="蟠龙天地江南水乡石桥示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="120" width="360" height="30" fill="var(--ill-water)"/>
+            <path d="M60 120 Q180 40 300 120" stroke="var(--ill-stone)" stroke-width="12" fill="none"/>
+            <path d="M60 120 Q180 56 300 120" stroke="var(--ill-cream)" stroke-width="4" fill="none"/>
+            <rect x="20" y="78" width="56" height="42" fill="var(--ill-cream)"/>
+            <path d="M14 78 L48 60 L82 78 Z" fill="var(--ill-stone)"/>
+            <rect x="286" y="74" width="58" height="46" fill="var(--ill-cream)"/>
+            <path d="M280 74 L315 54 L350 74 Z" fill="var(--ill-stone)"/>
+            <path d="M20 134 q12 -5 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0" stroke="var(--ill-sky)" stroke-width="2" fill="none" opacity="0.7"/>
+            <text x="14" y="26" font-size="13" fill="var(--ill-line)" font-weight="600">蟠龙天地 · 千年古镇</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://www.dcbbs.com/i-117447.html" target="_blank" rel="noopener">蟠龙天地：城中村蝶变江南水乡新地标 ↗</a></h3>
+          <div class="feat"><b>特点：</b>青浦千年古镇，上海首批完工亮相的城中村改造项目，8 年筹划、4 年建设。</div>
+          <ul>
+            <li>"城中村改造 + 古镇风貌活化"复合模式</li>
+            <li>保留水系肌理与历史街巷，植入公园与商业</li>
+            <li>从"脏乱差"城中村蜕变为"网红打卡地"，反哺区域价值</li>
+          </ul>
+          <div class="links">
+            <a href="https://www.dcbbs.com/i-117447.html" target="_blank" rel="noopener">图文报道 · 佰策地产文库</a>
+            <a href="https://zjw.sh.gov.cn/xwfb/20251022/fc51369e8b4645bbbe063801e5668142.html" target="_blank" rel="noopener">市住建委 · 城中村加速</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 外滩第二立面 -->
+      <div class="case">
+        <a class="pic" href="https://m.caizhongshe.cn/article-1397812160070524318.html" target="_blank" rel="noopener" aria-label="外滩第二立面实景图文（财中社）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="外滩历史建筑天际线示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="122" width="360" height="28" fill="var(--ill-ground)"/>
+            <rect x="24" y="60" width="56" height="62" fill="var(--ill-stone)"/>
+            <rect x="30" y="50" width="44" height="10" fill="var(--ill-cream)"/>
+            <rect x="92" y="44" width="62" height="78" fill="var(--ill-cream)"/>
+            <path d="M92 44 L123 24 L154 44 Z" fill="var(--ill-brick-2)"/>
+            <rect x="166" y="68" width="52" height="54" fill="var(--ill-stone)"/>
+            <rect x="230" y="36" width="60" height="86" fill="var(--ill-cream)"/>
+            <rect x="248" y="20" width="24" height="16" fill="var(--ill-stone)"/>
+            <circle cx="260" cy="14" r="6" fill="var(--ill-brick)"/>
+            <rect x="300" y="72" width="40" height="50" fill="var(--ill-stone)"/>
+            <g fill="var(--ill-water)">
+              <rect x="34" y="72" width="9" height="12"/><rect x="56" y="72" width="9" height="12"/>
+              <rect x="104" y="58" width="10" height="14"/><rect x="130" y="58" width="10" height="14"/>
+              <rect x="176" y="80" width="9" height="12"/><rect x="198" y="80" width="9" height="12"/>
+              <rect x="240" y="52" width="10" height="14"/><rect x="264" y="52" width="10" height="14"/>
+              <rect x="308" y="84" width="9" height="12"/><rect x="324" y="84" width="9" height="12"/>
+            </g>
+            <text x="14" y="140" font-size="13" fill="var(--ill-line)" font-weight="600">外滩"第二立面"</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://m.caizhongshe.cn/article-1397812160070524318.html" target="_blank" rel="noopener">外滩"第二立面"：141处历史建筑渐进式更新 ↗</a></h3>
+          <div class="feat"><b>特点：</b>黄浦区外滩腹地成片历史建筑群，旧改收官后风貌活化的主战场。</div>
+          <ul>
+            <li>"留改拆"并举，渐进式、小规模、可持续更新</li>
+            <li>修旧如旧、保留历史原真性，多种改造方式并用</li>
+            <li>金融、文化、商业功能复合导入，重塑外滩活力</li>
+          </ul>
+          <div class="links">
+            <a href="https://m.caizhongshe.cn/article-1397812160070524318.html" target="_blank" rel="noopener">图文报道 · 财中社</a>
+            <a href="https://www.jingan.gov.cn/rmtzx/003008/003008003/20240619/b3644759-83f6-43cf-9f9e-c76807b9cf41.html" target="_blank" rel="noopener">历史建筑活化利用</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 凤南一村 -->
+      <div class="case">
+        <a class="pic" href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener" aria-label="凤南一村实景图文（腾讯新闻）">
+          <svg viewBox="0 0 360 150" role="img" aria-label="凤南一村拆除重建塔吊与新楼示意图">
+            <rect width="360" height="150" fill="var(--ill-sky)"/>
+            <rect y="122" width="360" height="28" fill="var(--ill-ground)"/>
+            <rect x="40" y="46" width="64" height="76" fill="var(--ill-cream)"/>
+            <rect x="120" y="66" width="56" height="56" fill="var(--ill-cream)"/>
+            <g fill="var(--ill-water)">
+              <rect x="50" y="56" width="10" height="12"/><rect x="76" y="56" width="10" height="12"/>
+              <rect x="50" y="78" width="10" height="12"/><rect x="76" y="78" width="10" height="12"/>
+              <rect x="50" y="100" width="10" height="12"/><rect x="76" y="100" width="10" height="12"/>
+              <rect x="130" y="76" width="10" height="12"/><rect x="152" y="76" width="10" height="12"/>
+              <rect x="130" y="98" width="10" height="12"/><rect x="152" y="98" width="10" height="12"/>
+            </g>
+            <rect x="238" y="30" width="8" height="92" fill="var(--tag-policy)"/>
+            <rect x="196" y="30" width="120" height="7" fill="var(--tag-policy)"/>
+            <rect x="196" y="37" width="3" height="18" fill="var(--tag-policy)"/>
+            <path d="M300 37 v34" stroke="var(--ill-line)" stroke-width="2"/>
+            <rect x="290" y="71" width="20" height="14" fill="var(--ill-stone)"/>
+            <text x="14" y="26" font-size="13" fill="var(--ill-line)" font-weight="600">凤南一村 · 拆除重建</text>
+          </svg>
+        </a>
+        <div class="body">
+          <h3><a href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener">凤南一村：旧住房拆除重建"杨浦速度" ↗</a></h3>
+          <div class="feat"><b>特点：</b>全市规模最大、推进最快的旧住房（不成套职工住宅）拆除重建项目之一，2026 年 4 月首栋住宅楼封顶。</div>
+          <ul>
+            <li>"原拆原建"整体重建，居民户内成套独用</li>
+            <li>高比例签约生效的"全过程人民民主"征询机制</li>
+            <li>装配式建造提速，为小梁薄板改造提供样板</li>
+          </ul>
+          <div class="links">
+            <a href="https://news.qq.com/rain/a/20260521A06CJ300" target="_blank" rel="noopener">图文报道 · 腾讯新闻</a>
+            <a href="https://news.online.sh.cn/news/gb/content/2026-07/10/content_10467954.htm" target="_blank" rel="noopener">装配式建造风口</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 4 政策文件 ================= -->
+  <section id="policy">
+    <div class="sec-head"><h2>④ 政策文件</h2><span class="hint">国家及上海市最新城市更新政策</span></div>
+    <div class="sec-desc">近期发布的城市更新相关政策文件，点击查看原文或权威解读。</div>
+    <div class="cards">
+
+      <a class="item" href="https://www.mee.gov.cn/zcwj/gwywj/202606/t20260602_1157796.shtml" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">国务院</span><span class="date">2026-05-22 印发</span></div>
+        <h3>《城市更新"十五五"规划》（国发〔2026〕12号）<span class="ext">↗</span></h3>
+        <p>部署 6 方面重点任务、7 方面政策举措、14 项重大工程；2026 年安排中央预算内专项资金 970 亿元、超长期特别国债 1600 亿元支持地下管网等更新。另见<u>四部门解读（新华网）</u>。</p>
+      </a>
+
+      <a class="item" href="https://ghzyj.sh.gov.cn/zcwj/zhl/20260312/9c7de5f29d9142858506fa3d80c27c2b.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">市规资局</span><span class="date">2026-03-12</span></div>
+        <h3>《2026年上海市城市更新规划资源行动方案》<span class="ext">↗</span></h3>
+        <p>20 项具体任务：创新"人工智能+城市更新"应用场景、土地储备新机制、城中村改造规划资源保障、M0/G0/C0 融合用地与弹性规划制度等。</p>
+      </a>
+
+      <a class="item" href="https://www.shpt.gov.cn/gtj-zfbm/tpxinwen-gtj/20260514/969975.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">市级规划</span><span class="date">2026-05</span></div>
+        <h3>上海市城市更新和住房发展"十五五"规划（首次编制）<span class="ext">↗</span></h3>
+        <p>"惠民生、促发展、提品质、续文脉、优生态、强韧性"六维度 23 项重点任务，统筹城市更新与住房发展两大领域。</p>
+      </a>
+
+      <a class="item" href="https://fgj.sh.gov.cn/tpxw/20250516/e909917c81904deb8efe03c142d298b2.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">中办国办</span><span class="date">2025-05</span></div>
+        <h3>《关于持续推进城市更新行动的意见》<span class="ext">↗</span></h3>
+        <p>中央层面纲领性文件，确立城市更新为城市高质量发展的重要抓手（上海市房屋管理局转载）。</p>
+      </a>
+
+      <a class="item" href="https://ghzyj.sh.gov.cn/zcwj/zhl/20250427/c35c7321493241d999bcacac1dd8f7c4.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">市规资局</span><span class="date">2025-04-27</span></div>
+        <h3>《2025年上海市城市更新规划资源行动方案》<span class="ext">↗</span></h3>
+        <p>上一年度行动方案，可与 2026 年方案对照查看任务演进：法规完善、专项规划编制、历史文化名城保护规划推进等。</p>
+      </a>
+
+      <a class="item" href="https://zwgk.shcn.gov.cn/xxgk/cazj-zw/2025/51/76802.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">区级文件</span><span class="date">2025</span></div>
+        <h3>长宁区城市更新2025—2027年行动计划（草案）<span class="ext">↗</span></h3>
+        <p>区级三年行动计划范例，聚焦存量商务楼宇更新、风貌街区提升与旧住房改造。</p>
+      </a>
+
+      <a class="item" href="https://www.news.cn/politics/20260608/41175663b1ce4910816f249c9dcb542f/c.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">权威解读</span><span class="date">2026-06-08</span></div>
+        <h3>四部门解读《城市更新"十五五"规划》<span class="ext">↗</span></h3>
+        <p>住建部等四部门介绍规划的目标指标、资金安排与实施机制，是理解未来五年更新工作的关键材料。</p>
+        <div class="src">新华网</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ================= 5 外地经验 ================= -->
+  <section id="national">
+    <div class="sec-head"><h2>⑤ 外地经验</h2><span class="hint">国内重要城市的政策与案例</span></div>
+    <div class="sec-desc">北京、广州、深圳、成都等城市的城市更新政策动向与典型做法，供对照借鉴。</div>
+    <div class="cards cols-2">
+
+      <a class="item" href="https://www.news.cn/local/20260214/16f19e4e7721447ea1f589de59176d21/c.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">北京</span><span class="date">2026-02-14</span></div>
+        <h3>北京发布2026年首批城市更新计划项目清单：1321个项目、计划投资1049.5亿元<span class="ext">↗</span></h3>
+        <p>覆盖八大类型，重点包括故宫周边申请式退租、白塔寺历史风貌保护区、中轴线景观提升等；北京已进入全面"减量型"更新阶段。另见<u>新京报</u>、<u>首都之窗</u>。</p>
+        <div class="src">新华网</div>
+      </a>
+
+      <a class="item" href="https://www.citieschina.org.cn/show/id/a1672903550101.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">广州 / 深圳</span><span class="date">政策比较</span></div>
+        <h3>广深路径：从"三旧"改造到市场主导、政府调控<span class="ext">↗</span></h3>
+        <p>广州最早开展旧厂、旧村、旧城"三旧"改造并转向全面更新；深圳坚持市场主导，政府角色从"积极不干预"转向"积极调控"。</p>
+        <div class="src">中国市长协会 · 城市更新政策体系比较</div>
+      </a>
+
+      <a class="item" href="https://bovor.com/Article/detail/id/2560/cid/3.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag case">成都等14城</span><span class="date">实践路径</span></div>
+        <h3>14个城市的更新"实践路径"与"特色解读"<span class="ext">↗</span></h3>
+        <p>成都《城市更新行动计划（2024—2026年）》统筹地下管网改造（燃气管道不少于 1070 公里）、48 个社区"嵌入式"服务设施；杭州聚焦工业遗址与消防安全改造。</p>
+        <div class="src">博为国际规划咨询集团</div>
+      </a>
+
+      <a class="item" href="https://m.thepaper.cn/newsDetail_forward_30552683" target="_blank" rel="noopener">
+        <div class="top"><span class="tag case">住建部</span><span class="date">典型案例</span></div>
+        <h3>住建部发布八类41个城市更新典型案例<span class="ext">↗</span></h3>
+        <p>覆盖既有建筑改造利用、老旧小区改造、完整社区建设、老旧街区厂区更新等八大类，是全国可复制经验的官方案例库。</p>
+        <div class="src">澎湃新闻 · 城市更新简报</div>
+      </a>
+
+      <a class="item" href="https://whwb.cjn.cn/h5/html5/2026-02/26/content_152968_3170898.htm?curr=" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">全国盘点</span><span class="date">2026-02-26</span></div>
+        <h3>2025中国城市更新大事件盘点<span class="ext">↗</span></h3>
+        <p>武汉"住宅合作社"、温州"征租并举"等社会力量参与新模式；重庆、成都发布三年更新计划，多地组建"城市更新局"。</p>
+        <div class="src">武汉晚报</div>
+      </a>
+
+      <a class="item" href="https://m.bjnews.com.cn/detail/1767781591168748.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag event">体制机制</span><span class="date">2026-01</span></div>
+        <h3>"城市更新局"来了：城市发展的逻辑正在起变化<span class="ext">↗</span></h3>
+        <p>多地新设城市更新专职机构，标志城市发展从增量扩张转向存量治理的制度化。</p>
+        <div class="src">新京报专栏</div>
+      </a>
+
+      <a class="item" href="https://www.news.cn/fortune/20260507/9f7bda1ed5c444429721f40536179aa1/c.html" target="_blank" rel="noopener">
+        <div class="top"><span class="tag news">全国动态</span><span class="date">2026-05-07</span></div>
+        <h3>从"增量扩张"到"存量焕新"：多地城市更新加速推进<span class="ext">↗</span></h3>
+        <p>2026 年全国城市更新明显提速，从单一功能改造转向民生改善、文化传承、生态优化、产业激活多维协同。</p>
+        <div class="src">新华网</div>
+      </a>
+
+      <a class="item" href="https://www.ciecworld.com/index.php?c=show&id=351" target="_blank" rel="noopener">
+        <div class="top"><span class="tag policy">流程比较</span><span class="date">研究报告</span></div>
+        <h3>各地城市更新流程及政策保障梳理<span class="ext">↗</span></h3>
+        <p>系统梳理北上广深等城市更新的审批流程、政策工具与保障机制，适合做制度对标。</p>
+        <div class="src">中国国际经济咨询有限公司</div>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>本看板信息聚合自：<a href="https://www.shanghai.gov.cn/" target="_blank" rel="noopener">上海市人民政府</a> ·
+      <a href="https://zjw.sh.gov.cn/" target="_blank" rel="noopener">上海市住房和城乡建设管理委员会</a> ·
+      <a href="https://ghzyj.sh.gov.cn/" target="_blank" rel="noopener">上海市规划和自然资源局</a> ·
+      <a href="https://fgj.sh.gov.cn/" target="_blank" rel="noopener">上海市房屋管理局</a>
+      及新华网、澎湃新闻、界面新闻等媒体公开报道。</p>
+    <p style="margin-top:6px">各条目版权归原发布方所有；点击条目即跳转来源网页。生成日期：2026-07-14。</p>
+  </div>
+</footer>
+
+</body>
+</html>
