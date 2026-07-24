@@ -5,17 +5,34 @@ import { Art } from '../components/art'
 
 interface Props {
   onLetter: (index: number) => void
+  onMatch: () => void
   onBack: () => void
 }
 
-export function AbcTrainScreen({ onLetter, onBack }: Props) {
+const MATCH_UNLOCK = 6
+
+export function AbcTrainScreen({ onLetter, onMatch, onBack }: Props) {
   const progress = getProgress()
+  const learnedCount = progress.completedLetters.length
+  const matchReady = learnedCount >= MATCH_UNLOCK
 
   return (
     <div className="screen" style={{ background: 'var(--butter)' }}>
       <BackButton onClick={onBack} />
       <div className="screen-title">ABC Train</div>
       <div className="subtitle">字母火车 · 每节车厢一个字母朋友</div>
+      <button
+        className="big-btn"
+        style={{ marginBottom: 16, opacity: matchReady ? 1 : 0.55 }}
+        onClick={matchReady ? onMatch : undefined}
+      >
+        🎯 Letter Match 首字母配对
+        {!matchReady && (
+          <span className="zh" style={{ fontSize: 14 }}>
+            （学会 {MATCH_UNLOCK} 个字母解锁，还差 {MATCH_UNLOCK - learnedCount} 个）
+          </span>
+        )}
+      </button>
       <div className="card-grid">
         {LETTERS.map((letter, i) => {
           const done = progress.completedLetters.includes(letter.char)

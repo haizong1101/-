@@ -8,6 +8,8 @@ import { LevelScreen } from './screens/Level'
 import { AbcTrainScreen } from './screens/AbcTrain'
 import { LetterScreen } from './screens/Letter'
 import { StickersScreen } from './screens/Stickers'
+import { TprScreen } from './screens/Tpr'
+import { LetterMatchScreen } from './screens/LetterMatch'
 import { ParentGate, ParentScreen } from './screens/Parent'
 import { Bunny } from './components/common'
 
@@ -18,6 +20,8 @@ type Route =
   | { name: 'level'; islandId: string; levelIndex: number }
   | { name: 'abc' }
   | { name: 'letter'; index: number }
+  | { name: 'match' }
+  | { name: 'tpr' }
   | { name: 'stickers' }
   | { name: 'gate' }
   | { name: 'parent' }
@@ -78,6 +82,7 @@ export default function App() {
         <HomeScreen
           onIsland={id => go({ name: 'island', id })}
           onAbc={() => go({ name: 'abc' })}
+          onTpr={() => go({ name: 'tpr' })}
           onStickers={() => go({ name: 'stickers' })}
           onParent={() => go({ name: 'gate' })}
         />
@@ -106,9 +111,14 @@ export default function App() {
       return (
         <AbcTrainScreen
           onLetter={index => go({ name: 'letter', index })}
+          onMatch={() => go({ name: 'match' })}
           onBack={() => go({ name: 'home' })}
         />
       )
+    case 'match':
+      return <LetterMatchScreen onExit={() => go({ name: 'abc' })} />
+    case 'tpr':
+      return <TprScreen onExit={() => go({ name: 'home' })} />
     case 'letter':
       return (
         <LetterScreen

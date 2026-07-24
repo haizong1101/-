@@ -2,7 +2,7 @@ import { getProgress } from '../lib/store'
 import { BackButton } from '../components/common'
 import { Art, hasArt } from '../components/art'
 
-const TOTAL_SLOTS = 28
+const TOTAL_SLOTS = 60 // 34 个单词 + 26 个字母
 
 export function StickersScreen({ onBack }: { onBack: () => void }) {
   const { stickers } = getProgress()

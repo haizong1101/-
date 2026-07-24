@@ -1,22 +1,25 @@
 import { ISLANDS, LETTERS } from '../data/content'
 import { getProgress } from '../lib/store'
 import { Bunny } from '../components/common'
-import { BadgeArt, PaletteArt, PawArt, TrainArt } from '../components/art'
+import { Art, BadgeArt, PaletteArt, PawArt, TrainArt } from '../components/art'
 import { tts, ttsSeq } from '../lib/speech'
 
 const ISLAND_ICONS: Record<string, (p: { size?: number }) => React.ReactNode> = {
   animals: PawArt,
   colors: PaletteArt,
+  food: p => <Art name="cake" {...p} />,
+  body: p => <Art name="hand" {...p} />,
 }
 
 interface Props {
   onIsland: (id: string) => void
   onAbc: () => void
+  onTpr: () => void
   onStickers: () => void
   onParent: () => void
 }
 
-export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
+export function HomeScreen({ onIsland, onAbc, onTpr, onStickers, onParent }: Props) {
   const progress = getProgress()
 
   return (
@@ -67,6 +70,21 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
           <span className="progress-dots">
             🔤 {progress.completedLetters.length}/{LETTERS.length}
           </span>
+        </button>
+        <button
+          className="island-btn"
+          style={{ background: 'var(--mint)' }}
+          onClick={() => {
+            tts('Magic words! Let us play!')
+            onTpr()
+          }}
+        >
+          <span className="icon"><Bunny size={58} /></span>
+          <span>
+            <div className="name">Magic Words</div>
+            <div className="desc">魔法口令 · 你说小兔做</div>
+          </span>
+          <span className="progress-dots">🎤</span>
         </button>
         <button
           className="island-btn"

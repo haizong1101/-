@@ -352,6 +352,88 @@ body {
   50% { transform: translateY(-12px); }
 }
 
+/* TPR 魔法口令 */
+.tpr-stage {
+  position: relative;
+  display: inline-block;
+}
+
+.tpr-stage.act-jump {
+  animation: actJump 0.8s ease 2;
+}
+
+.tpr-stage.act-spin {
+  animation: actSpin 1.2s ease-in-out;
+}
+
+.tpr-stage.act-sleep {
+  animation: actSleep 2s ease-in-out infinite;
+}
+
+.tpr-stage.act-eat {
+  animation: actEat 0.6s ease 3;
+}
+
+@keyframes actJump {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-48px); }
+}
+
+@keyframes actSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes actSleep {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes actEat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.zzz {
+  position: absolute;
+  top: -8px;
+  right: -34px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  animation: floaty 2s ease-in-out infinite;
+}
+
+.tpr-prop {
+  position: absolute;
+  bottom: 0;
+  right: -44px;
+}
+
+.tpr-cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tpr-card {
+  min-height: 120px;
+  min-width: 110px;
+  padding: 12px 8px;
+}
+
+/* 首字母配对 */
+.match-letter {
+  font-size: 90px;
+  font-weight: 800;
+  line-height: 1;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 34px;
+  animation: pop 0.5s;
+}
+
 /* 休息遮罩 */
 .overlay {
   position: fixed;
