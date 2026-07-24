@@ -58,7 +58,7 @@ body {
 
 .subtitle {
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 18px;
   margin-bottom: 14px;
 }
 
@@ -157,7 +157,7 @@ body {
 }
 
 .word-card .zh {
-  font-size: 15px;
+  font-size: 18px;
   color: var(--ink-soft);
 }
 
@@ -451,8 +451,9 @@ body {
 }
 
 .island-btn .desc {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--ink-soft);
+  margin-top: 2px;
 }
 
 .progress-dots {
