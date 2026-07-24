@@ -42,8 +42,8 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
             >
               <span className="icon">{Icon ? <Icon size={58} /> : island.emoji}</span>
               <span>
-                <div className="name">{island.name}</div>
-                <div className="desc">{island.nameEn}</div>
+                <div className="name">{island.nameEn}</div>
+                <div className="desc">{island.name}</div>
               </span>
               <span className="progress-dots">
                 ⭐ {done}/{island.levels.length}
@@ -61,8 +61,8 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
         >
           <span className="icon"><TrainArt size={58} /></span>
           <span>
-            <div className="name">字母火车</div>
-            <div className="desc">ABC Train · 描一描写一写</div>
+            <div className="name">ABC Train</div>
+            <div className="desc">字母火车 · 描一描写一写</div>
           </span>
           <span className="progress-dots">
             🔤 {progress.completedLetters.length}/{LETTERS.length}
@@ -75,8 +75,8 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
         >
           <span className="icon"><BadgeArt size={58} /></span>
           <span>
-            <div className="name">贴纸博物馆</div>
-            <div className="desc">看看我收集的贴纸</div>
+            <div className="name">My Stickers</div>
+            <div className="desc">贴纸博物馆 · 看看我收集的贴纸</div>
           </span>
           <span className="progress-dots">{progress.stickers.length} 张</span>
         </button>

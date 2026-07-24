@@ -11,8 +11,8 @@ export function StickersScreen({ onBack }: { onBack: () => void }) {
   return (
     <div className="screen" style={{ background: 'var(--lilac)' }}>
       <BackButton onClick={onBack} />
-      <div className="screen-title">🏅 贴纸博物馆</div>
-      <div className="subtitle">已收集 {stickers.length} 张贴纸</div>
+      <div className="screen-title">My Stickers</div>
+      <div className="subtitle">贴纸博物馆 · 已收集 {stickers.length} 张</div>
       <div className="sticker-grid">
         {stickers.map(s => (
           <div key={s} className="sticker-cell">

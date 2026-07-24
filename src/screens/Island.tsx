@@ -15,10 +15,8 @@ export function IslandScreen({ island, onLevel, onBack }: Props) {
   return (
     <div className="screen" style={{ background: island.color }}>
       <BackButton onClick={onBack} />
-      <div className="screen-title">
-        {island.emoji} {island.name}
-      </div>
-      <div className="subtitle">{island.nameEn}</div>
+      <div className="screen-title">{island.nameEn}</div>
+      <div className="subtitle">{island.name}</div>
       <div className="card-grid">
         {island.levels.map((level, i) => {
           const done = progress.completedLevels.includes(level.id)

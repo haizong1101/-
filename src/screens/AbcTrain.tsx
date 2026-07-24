@@ -14,8 +14,8 @@ export function AbcTrainScreen({ onLetter, onBack }: Props) {
   return (
     <div className="screen" style={{ background: 'var(--butter)' }}>
       <BackButton onClick={onBack} />
-      <div className="screen-title">🚂 字母火车</div>
-      <div className="subtitle">ABC Train · 每节车厢一个字母朋友</div>
+      <div className="screen-title">ABC Train</div>
+      <div className="subtitle">字母火车 · 每节车厢一个字母朋友</div>
       <div className="card-grid">
         {LETTERS.map((letter, i) => {
           const done = progress.completedLetters.includes(letter.char)

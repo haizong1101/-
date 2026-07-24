@@ -1,10 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-// 可爱字体：英文圆体 Baloo 2 + 中文手绘感站酷快乐体（自托管，离线可用）
-import '@fontsource/baloo-2/latin-500.css'
-import '@fontsource/baloo-2/latin-700.css'
-import '@fontsource/baloo-2/latin-800.css'
+// 可爱字体：英文儿童手写体 Schoolbell + 中文手绘感站酷快乐体（自托管，离线可用）
+import '@fontsource/schoolbell'
 import '@fontsource/zcool-kuaile'
 import './styles.css'
 
