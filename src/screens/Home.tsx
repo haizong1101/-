@@ -1,7 +1,13 @@
 import { ISLANDS, LETTERS } from '../data/content'
 import { getProgress } from '../lib/store'
 import { Bunny } from '../components/common'
+import { BadgeArt, PaletteArt, PawArt, TrainArt } from '../components/art'
 import { tts, ttsSeq } from '../lib/speech'
+
+const ISLAND_ICONS: Record<string, (p: { size?: number }) => React.ReactNode> = {
+  animals: PawArt,
+  colors: PaletteArt,
+}
 
 interface Props {
   onIsland: (id: string) => void
@@ -23,6 +29,7 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
       <div className="map-row">
         {ISLANDS.map(island => {
           const done = island.levels.filter(l => progress.completedLevels.includes(l.id)).length
+          const Icon = ISLAND_ICONS[island.id]
           return (
             <button
               key={island.id}
@@ -33,7 +40,7 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
                 onIsland(island.id)
               }}
             >
-              <span className="icon">{island.emoji}</span>
+              <span className="icon">{Icon ? <Icon size={58} /> : island.emoji}</span>
               <span>
                 <div className="name">{island.name}</div>
                 <div className="desc">{island.nameEn}</div>
@@ -52,7 +59,7 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
             onAbc()
           }}
         >
-          <span className="icon">🚂</span>
+          <span className="icon"><TrainArt size={58} /></span>
           <span>
             <div className="name">字母火车</div>
             <div className="desc">ABC Train · 描一描写一写</div>
@@ -66,7 +73,7 @@ export function HomeScreen({ onIsland, onAbc, onStickers, onParent }: Props) {
           style={{ background: 'var(--lilac)' }}
           onClick={onStickers}
         >
-          <span className="icon">🏅</span>
+          <span className="icon"><BadgeArt size={58} /></span>
           <span>
             <div className="name">贴纸博物馆</div>
             <div className="desc">看看我收集的贴纸</div>

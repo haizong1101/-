@@ -3,6 +3,11 @@ import { Island, Level, PRAISES, PRAISES_ZH, Word, randomOf } from '../data/cont
 import { asrAvailable, listen, stopTts, tts, ttsSeq } from '../lib/speech'
 import { addSpoken, completeLevel } from '../lib/store'
 import { BackButton, Bunny, Confetti } from '../components/common'
+import { Art, BunnyArt } from '../components/art'
+
+function artOf(w: Word): string {
+  return w.art ?? w.en
+}
 
 type Phase = 'listen' | 'find' | 'say' | 'play' | 'reward'
 
@@ -94,7 +99,7 @@ function ListenPhase({ level, onDone }: { level: Level; onDone: () => void }) {
         style={{ minWidth: 220 }}
         onClick={() => present(word)}
       >
-        <span className="hero-word">{word.emoji}</span>
+        <Art name={artOf(word)} fallback={word.emoji} size={150} />
         <span className="hero-label">{word.en}</span>
         <span className="zh">{word.zh}（点我再听一遍）</span>
       </button>
@@ -166,7 +171,7 @@ function FindPhase({
             className={`word-card${flash?.en === w.en ? ` ${flash.kind}` : ''}`}
             onClick={() => pick(w)}
           >
-            <span className="emoji">{w.emoji}</span>
+            <Art name={artOf(w)} fallback={w.emoji} size={92} />
           </button>
         ))}
       </div>
@@ -269,7 +274,7 @@ function SayPhase({
       <Bunny talking={state === 'listening'} />
       <div className="speech-bubble">{bubble}</div>
       <div className="word-card" style={{ minWidth: 220, pointerEvents: 'none' }}>
-        <span className="hero-word">{word.emoji}</span>
+        <Art name={artOf(word)} fallback={word.emoji} size={130} />
         <span className="hero-label">{word.en}</span>
       </div>
       <button
@@ -339,7 +344,9 @@ function PlayPhase({
 
   return (
     <div className="center-stage">
-      <span style={{ fontSize: 84 }}>{fed ? '😋' : '🐰'}</span>
+      <span className="bunny">
+        <BunnyArt size={110} happy={fed} />
+      </span>
       <div className="speech-bubble">Give Bunny the {target.en}!</div>
       <div className="stars-row">
         {Array.from({ length: ROUNDS }, (_, i) => (
@@ -353,7 +360,7 @@ function PlayPhase({
             className={`word-card${flash?.en === w.en ? ` ${flash.kind}` : ''}`}
             onClick={() => pick(w)}
           >
-            <span className="emoji">{w.emoji}</span>
+            <Art name={artOf(w)} fallback={w.emoji} size={84} />
             <span className="en">{w.en}</span>
           </button>
         ))}
@@ -376,7 +383,7 @@ function RewardPhase({
   useEffect(() => {
     completeLevel(
       level.id,
-      level.words.map(w => w.emoji),
+      level.words.map(w => artOf(w)),
     )
     onCheer()
     ttsSeq([
@@ -393,7 +400,7 @@ function RewardPhase({
       <div style={{ display: 'flex', gap: 16 }}>
         {level.words.map(w => (
           <span key={w.en} className="sticker-cell" style={{ width: 96 }}>
-            {w.emoji}
+            <Art name={artOf(w)} fallback={w.emoji} size={72} />
           </span>
         ))}
       </div>

@@ -1,5 +1,6 @@
 import { getProgress } from '../lib/store'
 import { BackButton } from '../components/common'
+import { Art, hasArt } from '../components/art'
 
 const TOTAL_SLOTS = 28
 
@@ -17,6 +18,8 @@ export function StickersScreen({ onBack }: { onBack: () => void }) {
           <div key={s} className="sticker-cell">
             {s.startsWith('🔤') ? (
               <span style={{ fontWeight: 800, fontSize: 40 }}>{s.slice(2)}</span>
+            ) : hasArt(s) ? (
+              <Art name={s} size={64} />
             ) : (
               s
             )}

@@ -1,6 +1,7 @@
 import { LETTERS } from '../data/content'
 import { getProgress } from '../lib/store'
 import { BackButton } from '../components/common'
+import { Art } from '../components/art'
 
 interface Props {
   onLetter: (index: number) => void
@@ -21,9 +22,7 @@ export function AbcTrainScreen({ onLetter, onBack }: Props) {
           return (
             <button key={letter.char} className="word-card" onClick={() => onLetter(i)}>
               <span style={{ fontSize: 54, fontWeight: 800 }}>{letter.char}</span>
-              <span className="emoji" style={{ fontSize: 40 }}>
-                {letter.word.emoji}
-              </span>
+              <Art name={letter.word.art ?? letter.word.en} fallback={letter.word.emoji} size={56} />
               <span className="zh">{done ? '⭐ 学会啦' : letter.word.en}</span>
             </button>
           )

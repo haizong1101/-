@@ -7,6 +7,8 @@ export interface Word {
   emoji: string
   /** 磨耳朵环节的扩展语料，如拟声词 */
   flavor?: string
+  /** 卡通素材键名，默认取 en */
+  art?: string
 }
 
 export interface Level {
@@ -141,7 +143,7 @@ export const LETTERS: Letter[] = [
   {
     char: 'O',
     sound: 'o',
-    word: { en: 'orange', zh: '橙子', emoji: '🍊' },
+    word: { en: 'orange', zh: '橙子', emoji: '🍊', art: 'orange-fruit' },
     strokes: ['M50 14 A 33 36 0 1 0 50 86 A 33 36 0 1 0 50 14'],
   },
   {

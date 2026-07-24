@@ -1,6 +1,7 @@
 import { Island } from '../data/content'
 import { getProgress } from '../lib/store'
 import { BackButton } from '../components/common'
+import { Art } from '../components/art'
 
 interface Props {
   island: Island
@@ -23,8 +24,10 @@ export function IslandScreen({ island, onLevel, onBack }: Props) {
           const done = progress.completedLevels.includes(level.id)
           return (
             <button key={level.id} className="word-card" onClick={() => onLevel(i)}>
-              <span className="emoji">
-                {level.words.map(w => w.emoji).join('')}
+              <span style={{ display: 'flex', gap: 4 }}>
+                {level.words.map(w => (
+                  <Art key={w.en} name={w.art ?? w.en} fallback={w.emoji} size={62} />
+                ))}
               </span>
               <span className="en" style={{ fontSize: 18 }}>
                 {level.title}

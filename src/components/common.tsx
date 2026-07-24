@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
+import { BunnyArt } from './art'
 
-/** IP 角色小兔 Bunny（MVP 用 emoji + 动画呈现） */
-export function Bunny({ talking = false }: { talking?: boolean }) {
+/** IP 角色小兔 Bunny */
+export function Bunny({
+  talking = false,
+  happy = false,
+  size = 96,
+}: {
+  talking?: boolean
+  happy?: boolean
+  size?: number
+}) {
   return (
     <span className={`bunny${talking ? ' talking' : ''}`} role="img" aria-label="Bunny">
-      🐰
+      <BunnyArt size={size} happy={happy} />
     </span>
   )
 }

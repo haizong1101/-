@@ -47,7 +47,7 @@ export default function App() {
   if (resting && !['gate', 'parent'].includes(route.name)) {
     return (
       <div className="overlay">
-        <span style={{ fontSize: 84 }}>😴</span>
+        <Bunny happy size={110} />
         <div className="screen-title">小兔要睡觉啦</div>
         <div className="subtitle">
           今天学得真棒！眼睛要休息咯，明天再来玩吧～

@@ -3,6 +3,7 @@ import { LETTERS, Letter, PRAISES, PRAISES_ZH, randomOf } from '../data/content'
 import { asrAvailable, listen, stopTts, tts, ttsSeq } from '../lib/speech'
 import { addSpoken, completeLetter } from '../lib/store'
 import { BackButton, Bunny, Confetti } from '../components/common'
+import { Art } from '../components/art'
 import { Trace } from '../components/Trace'
 
 type Phase = 'intro' | 'phonics' | 'trace' | 'find' | 'say' | 'reward'
@@ -89,9 +90,7 @@ function Phonics({ letter, onDone }: { letter: Letter; onDone: () => void }) {
       </div>
       <button className="word-card" style={{ minWidth: 240 }} onClick={speak}>
         <span style={{ fontSize: 66, fontWeight: 800 }}>{letter.char}</span>
-        <span className="hero-word" style={{ fontSize: 90 }}>
-          {letter.word.emoji}
-        </span>
+        <Art name={letter.word.art ?? letter.word.en} fallback={letter.word.emoji} size={110} />
         <span className="en">{letter.word.en}</span>
         <span className="zh">{letter.word.zh}（点我再听）</span>
       </button>
@@ -268,9 +267,7 @@ function SayPhase({
       <div className="speech-bubble">{bubble}</div>
       <div className="word-card" style={{ minWidth: 200, pointerEvents: 'none' }}>
         <span style={{ fontSize: 52, fontWeight: 800 }}>{letter.char}</span>
-        <span className="hero-word" style={{ fontSize: 84 }}>
-          {letter.word.emoji}
-        </span>
+        <Art name={letter.word.art ?? letter.word.en} fallback={letter.word.emoji} size={100} />
         <span className="en">{letter.word.en}</span>
       </div>
       <button
